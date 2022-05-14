@@ -1,21 +1,21 @@
 {
   "frontend": {
     "scoreEnabled": true,
-    "spellsEnabled": true,
+    "spellsEnabled": false,
     "coachesEnabled": true,
     "blueTeam": {
       "name": "Team Blue",
-      "score": 2,
+      "score": 0,
       "coach": "Coach Blue",
-      "color": "rgb(0,151,196)"
+      "color": "#2d58bd"
     },
     "redTeam": {
       "name": "Team Red",
-      "score": 1,
+      "score": 0,
       "coach": "Coach Red",
-      "color": "rgb(222,40,70)"
+      "color": "#f09b38"
     },
-    "patch": "9.19"
+    "patch": "12.8.1"
   },
   "contentPatch": "latest",
   "contentCdn": "https://ddragon.leagueoflegends.com/cdn"
