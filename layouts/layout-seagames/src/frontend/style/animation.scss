@@ -162,13 +162,13 @@
     &.TeamBlue {
       .Bans {
         animation: bans-fadeoutblue 1s forwards;
-        animation-delay: 2s;
+        animation-delay: 1.2s;
       }
     }
     &.TeamRed {
       .Bans {
         animation: bans-fadeoutred 1s forwards;
-        animation-delay: 2s;
+        animation-delay: 1.2s;
       }
     }
   }  
@@ -176,14 +176,14 @@
     position: relative;
     bottom: 0;
     animation: timerout 0.75s forwards;
-    animation-delay: 3s;
+    animation-delay: 1.8s;
   }  
   .Logo, .Patch {
     position: relative;
     top: 0;
     z-index: -20;
-    animation: pick-move-down 0.75s forwards;
-    animation-delay: 3s;
+    animation: pick-move-down 0.7s forwards;
+    animation-delay: 1.8s;
   }
 }
 
@@ -229,7 +229,7 @@
 
 @keyframes timerout {
   100% {
-    bottom: -400px;
+    bottom: -350px;
   }
 }
 .AnimationPigs {

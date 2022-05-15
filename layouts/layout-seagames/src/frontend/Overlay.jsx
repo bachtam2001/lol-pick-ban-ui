@@ -36,7 +36,7 @@ export default class Overlay extends React.Component {
         this.setState({currentAnimationState: css.AnimationOut});
         setTimeout(() => {
             this.setState({currentAnimationState: css.TheAbsoluteVoid});
-        }, 4000);
+        }, 3000);
     }
 
     render() {
