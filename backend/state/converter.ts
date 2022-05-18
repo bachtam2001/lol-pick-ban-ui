@@ -4,8 +4,9 @@ import DataProviderService from '../data/DataProviderService';
 import DataDragon from '../data/league/DataDragon';
 import {CurrentState} from '../data/CurrentState';
 import RecordingDatapoint from '../recording/RecordingDatapoint';
+import State from "./State";
 
-const convertTeam = (kwargs: { team: Array<Cell>; actions: Array<Action>; dataProvider: DataProviderService; ddragon: DataDragon }): Team => {
+const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Array<Action>; dataProvider: DataProviderService; ddragon: DataDragon }): Team => {
   const newTeam = new Team();
   newTeam.picks = kwargs.team.map((cell: Cell) => {
     const currentAction = kwargs.actions.find((action) => !action.completed);
@@ -38,6 +39,14 @@ const convertTeam = (kwargs: { team: Array<Cell>; actions: Array<Action>; dataPr
     const summoner = kwargs.dataProvider.getSummonerById(cell.summonerId);
     if (summoner) {
       pick.displayName = summoner.displayName;
+      if (pick.displayName.startsWith(kwargs.oldstate.data.config.teams.blueTeam.short)){
+        pick.displayName.replace(kwargs.oldstate.data.config.teams.blueTeam.short, '');
+        pick.displayName = pick.displayName.trim();
+      }
+      else if (pick.displayName.startsWith(kwargs.oldstate.data.config.teams.redTeam.short)){
+        pick.displayName.replace(kwargs.oldstate.data.config.teams.redTeam.short, '');
+        pick.displayName = pick.displayName.trim();
+      } 
     }
 
     if (currentAction && currentAction.type === ActionType.PICK && currentAction.actorCellId === cell.cellId && !currentAction.completed) {
@@ -115,7 +124,7 @@ const convertStateName = (actions: Array<Action>) => {
   }
 };
 
-const convertState = (state: CurrentState, dataProvider: DataProviderService, ddragon: DataDragon): { blueTeam: Team; redTeam: Team; timer: number; state: string } => {
+const convertState = (state: CurrentState, oldState: State, dataProvider: DataProviderService, ddragon: DataDragon): { blueTeam: Team; redTeam: Team; timer: number; state: string } => {
   const lcuSession = state.session;
 
   const currentDate = (state as RecordingDatapoint).time ? new Date((state as RecordingDatapoint).time) : new Date();
@@ -125,8 +134,8 @@ const convertState = (state: CurrentState, dataProvider: DataProviderService, dd
     flattenedActions.push(...actionGroup);
   });
 
-  const blueTeam = convertTeam({ team: lcuSession.myTeam, actions: flattenedActions, dataProvider, ddragon });
-  const redTeam = convertTeam({ team: lcuSession.theirTeam, actions: flattenedActions, dataProvider, ddragon });
+  const blueTeam = convertTeam({ team: lcuSession.myTeam, oldstate: oldState, actions: flattenedActions, dataProvider, ddragon });
+  const redTeam = convertTeam({ team: lcuSession.theirTeam, oldstate: oldState, actions: flattenedActions, dataProvider, ddragon });
 
   const timer = convertTimer(lcuSession.timer, currentDate);
   const stateName = convertStateName(flattenedActions);

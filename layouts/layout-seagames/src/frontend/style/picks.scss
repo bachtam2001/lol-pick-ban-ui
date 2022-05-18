@@ -83,9 +83,6 @@
   &:last-child {
      border-right: solid var(--border-between-color) 1px;
    }
-  &:first-child {
-    border: none;
-  }
   &.Active {
     .PlayerName {
       position: absolute;
@@ -112,9 +109,6 @@
 &.TeamRed .Picks .Pick {
   &:first-child {
     border-left: solid var(--border-between-color) 1px;
-  }
-  &:first-child {
-    border: none;
   }
   &.Active {
     .PlayerName {

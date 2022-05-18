@@ -10,20 +10,24 @@ function App() {
             scoreEnabled: false,
             spellsEnabled: true,
             coachesEnabled: false,
+            patch: ""
+        },
+        teams: {
             blueTeam: {
-                name: "Team Blue",
-                score: 0,
-                coach: "",
-                color: "rgb(0,151,196)"
+              name: "Team Blue",
+              short: "BLUE",
+              score: 0,
+              coach: "Coach Blue",
+              color: "#2d58bd"
             },
             redTeam: {
-                name: "Team Red",
-                score: 0,
-                coach: "",
-                color: "rgb(222,40,70)"
-            },
-            patch: ""
-        }
+              name: "Team Red",
+              short: "RED",
+              score: 0,
+              coach: "Coach Red",
+              color: "#f09b38"
+            }
+          },
     });
     const [error, setError] = useState('');
     useEffect(() => {

@@ -3,7 +3,7 @@
 body {
     // background: black;
     // font-family: 'Nova Flat', sans-serif;
-    font-family: Amarello;
+    font-family: UTM Neutra;
 
     // background: url("https://dotesports-media.nyc3.cdn.digitaloceanspaces.com/wp-content/uploads/2019/06/14131635/LEC-Summer-2019.jpg");
     background-size: cover;
@@ -33,7 +33,8 @@ body {
 
     .Patch {
         height: var(--box-patch-height);
-        font-size: 25px;
+        line-height: var(--box-patch-height);
+        font-size: 23px;
         text-align: center;
         color: white;
         /* border-left: darkgrey 1px solid;
@@ -53,10 +54,10 @@ body {
         z-index: 10;
 
         img {
-            width: 80%;
-            height: 80%;
+            width: 100%;
+            height: 100%;
             margin: 0 auto;
-            padding-top: 10%;
+            padding-top: 0;
             display: block;
             object-fit: contain;
         }

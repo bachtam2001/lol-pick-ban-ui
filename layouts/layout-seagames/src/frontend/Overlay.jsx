@@ -17,17 +17,14 @@ export default class Overlay extends React.Component {
         this.setState({openingAnimationPlayed: true});
         setTimeout(() => {
             this.setState({currentAnimationState: css.AnimationHidden});
-
             setTimeout(() => {
                 this.setState({currentAnimationState: css.AnimationTimer + ' ' + css.AnimationBansPick});
-
                 setTimeout(() => {
                     this.setState({currentAnimationState: css.AnimationBansPick + ' ' + css.AnimationBansPickOnly});
-
                     setTimeout(() => {
                         this.setState({currentAnimationState: css.AnimationPigs});
                     }, 1000);
-                }, 1450);
+                }, 2000);
             }, 800);
         }, 1000);
     }    
@@ -85,7 +82,7 @@ export default class Overlay extends React.Component {
         );
 
         return (
-            <div className={cx(css.Overlay, css.Seagames, this.state.currentAnimationState)} style={{"--color-red": config.frontend.redTeam.color, "--color-blue": config.frontend.blueTeam.color}}>
+            <div className={cx(css.Overlay, css.Seagames, this.state.currentAnimationState)} style={{"--color-red": config.teams.redTeam.color, "--color-blue": config.teams.blueTeam.color}}>
                 {Object.keys(state).length === 0 && <div className={cx(css.infoBox)}>Not connected to backend service!</div>}
                 {Object.keys(state).length !== 0 &&
                 <div className={cx(css.ChampSelect)}>
@@ -104,17 +101,15 @@ export default class Overlay extends React.Component {
                         })}>
                             <div className={cx(css.Background, css.Blue)} />
                             <div className={cx(css.Background, css.Red)} />
-                            {state.timer < 100 && <div className={cx(css.TimerChars)}>
-                                {state.timer.toString().split('').map((char, idx) => <div key={`div-${idx}`}
-                                    className={cx(css.TimerChar)}>{char}</div>)}
-                            </div>}
-                            {state.timer >= 100 && <div className={cx(css.TimerChars)}>
-                                {state.timer}
-                            </div>}
                         </div>
                     </div>
-                    {renderTeam(css.TeamBlue, config.frontend.blueTeam, state.blueTeam)}
-                    {renderTeam(css.TeamRed, config.frontend.redTeam, state.redTeam)}
+                    <div className={cx(css.LineTimer, {
+                        [css.Timer60]: state.state === '' && !state.newState,
+                        [css.Timer30]: !(state.state === '') && !state.newState,
+                        [css.Timer30Rev]: state.newState,
+                    })}></div>
+                    {renderTeam(css.TeamBlue, config.teams.blueTeam, state.blueTeam)}
+                    {renderTeam(css.TeamRed, config.teams.redTeam, state.redTeam)}
                 </div>}
             </div>
         )

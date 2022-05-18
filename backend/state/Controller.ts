@@ -53,7 +53,7 @@ export default class Controller extends EventEmitter {
       return;
     }
 
-    const cleanedData = convertState(newState, this.dataProvider, this.ddragon);
+    const cleanedData = convertState(newState, this.state, this.dataProvider, this.ddragon);
 
     const currentActionBefore = this.state.data.getCurrentAction();
 
@@ -80,8 +80,10 @@ export default class Controller extends EventEmitter {
 
     if (!isActionEqual(currentActionBefore, currentActionAfter)) {
       const action = this.state.data.refreshAction(currentActionBefore);
-
       this.state.newAction(action);
+      this.state.data.newState = true;
+    } else {
+      this.state.data.newState = false;
     }
   }
 }
