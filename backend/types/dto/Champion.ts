@@ -9,6 +9,5 @@ export class Champion {
   loadingImg = '';
   squareImg = '';
   idName = '';
-  currentSkin = new Skin();
-  skins: Array<Skin> = [];
+  currentSkin? = new Skin();
 }

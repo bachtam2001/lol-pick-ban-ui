@@ -18,6 +18,7 @@ class DataDragon {
       cdn: ''
     };
     champions: Array<Champion> = [];
+    skins: Array<Skin> = [];
     summonerSpells: Array<Spell> = [];
     state: State;
 
@@ -53,12 +54,15 @@ class DataDragon {
 
       this.champions = Object.values((await needle('get', `${this.state.data.meta.cdn}/${this.state.data.meta.version.champion}/data/en_US/champion.json`, { json: true })).body.data);
       log.info(`Loaded ${this.champions.length} champions`);
-      let totalSkins = 0
       for (let index = 0; index < this.champions.length; index++) {
-        this.champions[index].skins = Object.values((await needle('get', `${this.state.data.meta.cdn}/${this.state.data.meta.version.champion}/data/en_US/champion/${this.champions[index].id}.json`, { json: true })).body.data[`${this.champions[index].id}`].skins);
-        totalSkins += this.champions[index].skins.length;
+        var skins = new Array<Skin>();
+        skins = Object.values((await needle('get', `${this.state.data.meta.cdn}/${this.state.data.meta.version.champion}/data/en_US/champion/${this.champions[index].id}.json`)).body.data[`${this.champions[index].id}`].skins);
+        skins.forEach(skin => {
+            skin.championId = this.champions[index].id.toString();
+            this.skins.push(skin);
+        });
       }
-      log.info(`Loaded ${totalSkins} champion skins`);
+      log.info(`Loaded ${this.skins.length} champion skins`);
       this.summonerSpells = Object.values((await needle('get', `${this.state.data.meta.cdn}/${this.state.data.meta.version.item}/data/en_US/summoner.json`, { json: true })).body.data);
       log.info(`Loaded ${this.summonerSpells.length} summoner spells`);
 
@@ -75,12 +79,13 @@ class DataDragon {
     }
 
     getSkinById(champion: Champion, id: string): Skin {
-      return champion.skins.find((skin: Skin) => {
+      return this.skins.find((skin: Skin) => {
         if (id === skin.id){
-          return this.extendSkinLocal(champion,skin);
+          return this.extendSkinLocal(skin);
         }
-      }) || champion.skins[0] ;
+      }) || new Skin(champion);
     }
+    
     extendChampion(champion: Champion): Champion {
       champion.squareImg = `${this.state.getVersionCDN()}/img/champion/square/${champion.id}.png`;
       champion.splashImg = `${this.state.getCDN()}/img/champion/splash/${champion.id}_0.jpg`;
@@ -89,10 +94,10 @@ class DataDragon {
       return champion;
     }
 
-    extendSkin(champion: Champion, skin: Skin): Skin {
-      skin.splashImg = `${this.state.getCDN()}/img/champion/splash/${champion.id}_${skin.num}.jpg`;
-      skin.loadingImg = `${this.state.getCDN()}/img/champion/loading/${champion.id}_${skin.num}.jpg`;
-      skin.splashCenteredImg = `${this.state.getCDN()}/img/champion/centered/${champion.id}_${skin.num}.jpg`; 
+    extendSkin(skin: Skin): Skin {
+      skin.splashImg = `${this.state.getCDN()}/img/champion/splash/${skin.championId}_${skin.num}.jpg`;
+      skin.loadingImg = `${this.state.getCDN()}/img/champion/loading/${skin.championId}_${skin.num}.jpg`;
+      skin.splashCenteredImg = `${this.state.getCDN()}/img/champion/centered/${skin.championId}_${skin.num}.jpg`; 
       return skin;
     }
 
@@ -104,10 +109,10 @@ class DataDragon {
       return champion;
     }
 
-    extendSkinLocal(champion: Champion, skin: Skin): Skin {
-      skin.splashImg = `/cache/${this.versions.n.champion}/champion/splash/${champion.id}_${skin.num}.jpg`;
-      skin.loadingImg = `/cache/${this.versions.n.champion}/champion/loading/${champion.id}_${skin.num}.jpg`;
-      skin.splashCenteredImg = `/cache/${this.versions.n.champion}/champion/centered/${champion.id}_${skin.num}.jpg`;
+    extendSkinLocal(skin: Skin): Skin {
+      skin.splashImg = `/cache/${this.versions.n.champion}/champion/splash/${skin.championId}_${skin.num}.jpg`;
+      skin.loadingImg = `/cache/${this.versions.n.champion}/champion/loading/${skin.championId}_${skin.num}.jpg`;
+      skin.splashCenteredImg = `/cache/${this.versions.n.champion}/champion/centered/${skin.championId}_${skin.num}.jpg`;
       return skin;
     }
 
@@ -182,12 +187,13 @@ class DataDragon {
         tasks.push(downloadFile(champion.splashImg, `${patchFolderChampionSplash}/${champion.id}_0.jpg`));
         tasks.push(downloadFile(champion.splashCenteredImg, `${patchFolderChampionCentered}/${champion.id}_0.jpg`));
         tasks.push(downloadFile(champion.squareImg, `${patchFolderChampionSquare}/${champion.id}.png`));
-        champion.skins.forEach(skin => {
-          skin = this.extendSkin(champion,skin);
-          tasks.push(downloadFile(skin.loadingImg, `${patchFolderChampionLoading}/${champion.id}_${skin.num}.jpg`));
-          tasks.push(downloadFile(skin.splashImg, `${patchFolderChampionSplash}/${champion.id}_${skin.num}.jpg`));
-          tasks.push(downloadFile(skin.splashCenteredImg, `${patchFolderChampionCentered}/${champion.id}_${skin.num}.jpg`));
-        });
+      });
+
+      this.skins.forEach(skin => {
+        skin = this.extendSkin(skin);
+        tasks.push(downloadFile(skin.loadingImg, `${patchFolderChampionLoading}/${skin.championId}_${skin.num}.jpg`));
+        tasks.push(downloadFile(skin.splashImg, `${patchFolderChampionSplash}/${skin.championId}_${skin.num}.jpg`));
+        tasks.push(downloadFile(skin.splashCenteredImg, `${patchFolderChampionCentered}/${skin.championId}_${skin.num}.jpg`));
       });
 
       this.summonerSpells.forEach(spell => {

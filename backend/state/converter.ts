@@ -35,7 +35,6 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
       splashCenteredImg: champion ? champion.splashCenteredImg : '',
       squareImg: champion ? champion.squareImg : '',
       currentSkin: champion ? kwargs.ddragon.getSkinById(champion, cell.selectedSkinId.toString()) : new Skin(),
-      skins: champion ? champion.skins : []
     };
 
     const summoner = kwargs.dataProvider.getSummonerById(cell.summonerId);
@@ -81,9 +80,7 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
       loadingImg: champion ? champion.loadingImg : '',
       splashImg: champion ? champion.splashImg : '',
       splashCenteredImg: champion ? champion.splashCenteredImg : '',
-      squareImg: champion ? champion.squareImg : '',
-      currentSkin: champion ? champion.skins[0] : new Skin(),
-      skins: champion ? champion.skins : [],
+      squareImg: champion ? champion.squareImg : ''
     };
 
     return ban;
