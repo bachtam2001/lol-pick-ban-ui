@@ -1,5 +1,5 @@
 import {Action, ActionType, Cell, Timer} from '../types/lcu';
-import {Ban, Champion, Pick, Team} from '../types/dto';
+import {Ban, Champion, Skin , Pick, Team} from '../types/dto';
 import DataProviderService from '../data/DataProviderService';
 import DataDragon from '../data/league/DataDragon';
 import {CurrentState} from '../data/CurrentState';
@@ -34,6 +34,8 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
       splashImg: champion ? champion.splashImg : '',
       splashCenteredImg: champion ? champion.splashCenteredImg : '',
       squareImg: champion ? champion.squareImg : '',
+      currentSkin: champion ? kwargs.ddragon.getSkinById(champion, cell.selectedSkinId.toString()) : new Skin(),
+      skins: champion ? champion.skins : []
     };
 
     const summoner = kwargs.dataProvider.getSummonerById(cell.summonerId);
@@ -80,6 +82,8 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
       splashImg: champion ? champion.splashImg : '',
       splashCenteredImg: champion ? champion.splashCenteredImg : '',
       squareImg: champion ? champion.squareImg : '',
+      currentSkin: champion ? champion.skins[0] : new Skin(),
+      skins: champion ? champion.skins : [],
     };
 
     return ban;
@@ -105,7 +109,7 @@ const convertStateName = (actions: Array<Action>) => {
   const currentActionIndex = actions.findIndex((action) => !action.completed);
 
   if (currentActionIndex === -1) {
-    return '';
+    return 'SWAP PHASE';
   }
 
   const currentAction = actions[currentActionIndex];

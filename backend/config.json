@@ -7,15 +7,15 @@
   },
   "teams": {
     "blueTeam": {
-      "name": "Vietnam",
-      "short": "VIE",
+      "name": "",
+      "short": "",
       "score": 0,
       "coach": "Coach Blue",
       "color": "#2d58bd"
     },
     "redTeam": {
-      "name": "Thailand",
-      "short": "THA",
+      "name": "",
+      "short": "",
       "score": 0,
       "coach": "Coach Red",
       "color": "#f09b38"

@@ -1,15 +1,15 @@
 export class Config {
   teams = {
     "blueTeam": {
-      "name": "Vietnam",
-      "short": "VIE",
+      "name": "Team Blue",
+      "short": "BLUE",
       "score": 0,
       "coach": "Coach Blue",
       "color": "#2d58bd"
     },
     "redTeam": {
-      "name": "Thailand",
-      "short": "THA",
+      "name": "Team Red",
+      "short": "RED",
       "score": 0,
       "coach": "Coach Red",
       "color": "#f09b38"
