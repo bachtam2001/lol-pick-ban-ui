@@ -1,6 +1,7 @@
 export * from './Actionable';
 export * from './Ban';
 export * from './Champion';
+export * from './Skin';
 export * from './Meta';
 export * from './Pick';
 export * from './Spell';

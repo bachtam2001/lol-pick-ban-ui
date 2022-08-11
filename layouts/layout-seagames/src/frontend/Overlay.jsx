@@ -5,7 +5,7 @@ import Pick from "./Pick";
 import css from './style/index.module.scss';
 import Ban from "./Ban";
 
-import logo from '../assets/Logo.gif';
+import logo from '../assets/Logo.png';
 
 export default class Overlay extends React.Component {
     state = {
@@ -66,10 +66,10 @@ export default class Overlay extends React.Component {
                             {teamConfig.score}
                         </div>}
                         {teamName === css.TeamRed && renderBans(teamState)}
-                        <div className={cx(css.TeamName, {[css.WithoutCoaches]: !config.frontend.coachesEnabled})}>
+                        <div className={cx(css.TeamName, {[css.WithoutCoaches]: !config.frontend.coachesEnabled || teamConfig.coach === ""})}>
                             {teamConfig.name}
                             {config.frontend.coachesEnabled && <div className={css.CoachName}>
-                                Coach: {teamConfig.coach}
+                                {teamConfig.coach}
                             </div>}
                         </div>
                         {teamName === css.TeamBlue && renderBans(teamState)}

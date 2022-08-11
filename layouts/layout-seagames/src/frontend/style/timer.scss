@@ -68,7 +68,7 @@
   transform: translateX(-50%);
   position: absolute;
   overflow:hidden;
-  background-image: linear-gradient(to right, var(--color-blue) 0%, var(--color-red) 100%);
+  background-image: linear-gradient(to right, var(--color-blue) 0%, black 50% , var(--color-red) 100%);
   &.Timer30{
     animation: timer-in 30s forwards;
     animation-fill-mode: forwards;  

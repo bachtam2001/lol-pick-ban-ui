@@ -1,2 +1,2 @@
-cd layouts\layout-volu-europe
-yarn start
+cd layouts\layout-seagames
+npm start

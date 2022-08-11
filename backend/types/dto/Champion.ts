@@ -1,3 +1,5 @@
+import { Skin } from "./Skin";
+
 export class Champion {
   id = 0;
   name = '';
@@ -7,4 +9,5 @@ export class Champion {
   loadingImg = '';
   squareImg = '';
   idName = '';
+  currentSkin? = new Skin();
 }

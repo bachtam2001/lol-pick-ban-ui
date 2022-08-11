@@ -1,0 +1,1 @@
+yarn start --record ../recordings/vcs-tournament

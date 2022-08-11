@@ -206,6 +206,15 @@
     animation: pick-move-down 0.7s forwards;
     animation-delay: 1.8s;
   }
+   .LineTimer{
+    animation: timerlineout 2s forwards;
+  }
+}
+
+@keyframes timerlineout{
+  100% {
+    width: 0;
+  }
 }
 
 @keyframes bans-fadeoutblue {
