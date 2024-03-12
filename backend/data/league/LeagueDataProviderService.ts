@@ -1,9 +1,8 @@
-import needle, { NeedleResponse } from 'needle';
-
 import logger from '../../logging';
 import { Session, Cell, Summoner } from '../../types/lcu';
 
 import { CurrentState } from '../CurrentState';
+import { state } from '../../app';
 import { EventEmitter } from 'events';
 import DataProviderService from '../DataProviderService';
 import Recorder from '../../recording/Recorder';
@@ -13,6 +12,8 @@ import Connector, {
   LibraryConnector,
   ExperimentalConnector,
 } from './connector';
+import fs from 'fs';
+import { Response } from 'league-connect';
 const log = logger('LCUDataProviderService');
 
 class LeagueDataProviderService extends EventEmitter
@@ -48,8 +49,12 @@ class LeagueDataProviderService extends EventEmitter
     this.getCurrentData = this.getCurrentData.bind(this);
 
     if (GlobalContext.commandLine.record) {
-      this.recorder = new Recorder(GlobalContext.commandLine.record);
-      log.info('Recording to ' + GlobalContext.commandLine.record);
+      if (fs.existsSync('../recordings' + '/' + GlobalContext.commandLine.record + '.json') && !state.data.config.overwriteRecording) {
+        log.error('Recording ' + GlobalContext.commandLine.record + ' already exists. Will not overwrite and therefore not perform recording.')
+      } else {
+        this.recorder = new Recorder(GlobalContext.commandLine.record);
+        log.info('Recording to ' + GlobalContext.commandLine.record);
+      }
     }
 
     this.connector.on('connect', this.onLeagueConnected);
@@ -65,14 +70,14 @@ class LeagueDataProviderService extends EventEmitter
       return null
     }
 
-    const response = await needle(
-      'get',
-      `https://127.0.0.1:${this.connectionInfo.port}/lol-champ-select/v1/session`,
-      this.requestConfig
-    );
+    const response = await this.connector.request({
+      url: '/lol-champ-select/v1/session',
+      method: 'GET'
+    })
+
     const currentState = new CurrentState(
-      response.statusCode === 200,
-      response.body
+      response?.ok ?? false,
+      await response?.json()
     );
 
     if (this.recorder) {
@@ -89,13 +94,12 @@ class LeagueDataProviderService extends EventEmitter
 
     const fetchPlayersFromTeam = (
       team: Array<Cell>
-    ): Array<Promise<NeedleResponse>> =>
+    ): Array<Promise<Response<any> | undefined>> =>
       team.map((cell) =>
-        needle(
-          'get',
-          `https://127.0.0.1:${this.connectionInfo.port}/lol-summoner/v1/summoners/${cell.summonerId}`,
-          this.requestConfig
-        )
+        this.connector.request({
+          url: `/lol-summoner/v1/summoners/${cell.summonerId}`,
+          method: 'GET'
+        })
       );
 
     const jobs = [
@@ -105,8 +109,8 @@ class LeagueDataProviderService extends EventEmitter
 
     const completedJobs = await Promise.all(jobs);
 
-    completedJobs.forEach((job: NeedleResponse) => {
-      this.summoners.push(job.body);
+    completedJobs.forEach(async (job) => {
+      this.summoners.push(await job?.json());
     });
 
     if (this.recorder) {
