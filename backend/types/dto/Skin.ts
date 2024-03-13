@@ -1,4 +1,4 @@
-import { Champion } from "./Champion";
+import { Champion } from './Champion';
 
 export class Skin {
   id = '';
@@ -9,11 +9,13 @@ export class Skin {
   splashCenteredImg = '';
   loadingImg = '';
   constructor(champion?: Champion) {
-    if (champion===undefined) {return this}
-    this.id = champion.key + "000";
-    this.championId = champion.id.toString()
+    if (champion === undefined) {
+      return this;
+    }
+    this.id = champion.key + '000';
+    this.championId = champion.id.toString();
     this.num = 0;
-    this.name = "Default";
+    this.name = 'Default';
     this.splashImg = champion.splashImg;
     this.loadingImg = champion.loadingImg;
     this.splashCenteredImg = champion.splashCenteredImg;

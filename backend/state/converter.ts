@@ -1,12 +1,18 @@
-import {Action, ActionType, Cell, Timer} from '../types/lcu';
-import {Ban, Champion, Skin , Pick, Team} from '../types/dto';
+import { Action, ActionType, Cell, Timer } from '../types/lcu';
+import { Ban, Champion, Skin, Pick, Team } from '../types/dto';
 import DataProviderService from '../data/DataProviderService';
 import DataDragon from '../data/league/DataDragon';
-import {CurrentState} from '../data/CurrentState';
+import { CurrentState } from '../data/CurrentState';
 import RecordingDatapoint from '../recording/RecordingDatapoint';
-import State from "./State";
+import State from './State';
 
-const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Array<Action>; dataProvider: DataProviderService; ddragon: DataDragon }): Team => {
+const convertTeam = (kwargs: {
+  team: Array<Cell>;
+  oldstate: State;
+  actions: Array<Action>;
+  dataProvider: DataProviderService;
+  ddragon: DataDragon;
+}): Team => {
   const newTeam = new Team();
   newTeam.picks = kwargs.team.map((cell: Cell) => {
     const currentAction = kwargs.actions.find((action) => !action.completed);
@@ -34,23 +40,43 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
       splashImg: champion ? champion.splashImg : '',
       splashCenteredImg: champion ? champion.splashCenteredImg : '',
       squareImg: champion ? champion.squareImg : '',
-      currentSkin: champion ? kwargs.ddragon.getSkinById(champion, cell.selectedSkinId.toString()) : new Skin(),
+      currentSkin: champion
+        ? kwargs.ddragon.getSkinById(champion, cell.selectedSkinId.toString())
+        : new Skin(),
     };
 
     const summoner = kwargs.dataProvider.getSummonerById(cell.summonerId);
     if (summoner) {
       pick.displayName = summoner.displayName;
-      if (pick.displayName.startsWith(kwargs.oldstate.data.config.teams.blueTeam.short)){
-        pick.displayName.replace(kwargs.oldstate.data.config.teams.blueTeam.short, '');
+      if (
+        pick.displayName.startsWith(
+          kwargs.oldstate.data.config.teams.blueTeam.short
+        )
+      ) {
+        pick.displayName.replace(
+          kwargs.oldstate.data.config.teams.blueTeam.short,
+          ''
+        );
+        pick.displayName = pick.displayName.trim();
+      } else if (
+        pick.displayName.startsWith(
+          kwargs.oldstate.data.config.teams.redTeam.short
+        )
+      ) {
+        pick.displayName.replace(
+          kwargs.oldstate.data.config.teams.redTeam.short,
+          ''
+        );
         pick.displayName = pick.displayName.trim();
       }
-      else if (pick.displayName.startsWith(kwargs.oldstate.data.config.teams.redTeam.short)){
-        pick.displayName.replace(kwargs.oldstate.data.config.teams.redTeam.short, '');
-        pick.displayName = pick.displayName.trim();
-      } 
     }
 
-    if (currentAction && currentAction.type === ActionType.PICK && currentAction.actorCellId === cell.cellId && !currentAction.completed) {
+    if (
+      currentAction &&
+      currentAction.type === ActionType.PICK &&
+      currentAction.actorCellId === cell.cellId &&
+      !currentAction.completed
+    ) {
       pick.isActive = true;
       newTeam.isActive = true;
     }
@@ -58,33 +84,39 @@ const convertTeam = (kwargs: { team: Array<Cell>; oldstate: State, actions: Arra
     return pick;
   });
 
-  const isInThisTeam = (cellId: number): boolean => kwargs.team.filter((cell) => cell.cellId === cellId).length !== 0;
+  const isInThisTeam = (cellId: number): boolean =>
+    kwargs.team.filter((cell) => cell.cellId === cellId).length !== 0;
 
   let isBanDetermined = false;
-  newTeam.bans = kwargs.actions.filter((action) => action.type === ActionType.BAN && isInThisTeam(action.actorCellId)).map((action) => {
-    const ban = new Ban();
+  newTeam.bans = kwargs.actions
+    .filter(
+      (action) =>
+        action.type === ActionType.BAN && isInThisTeam(action.actorCellId)
+    )
+    .map((action) => {
+      const ban = new Ban();
 
-    if (!action.completed && !isBanDetermined) {
-      isBanDetermined = true;
-      ban.isActive = true;
-      newTeam.isActive = true;
-      ban.champion = new Champion();
+      if (!action.completed && !isBanDetermined) {
+        isBanDetermined = true;
+        ban.isActive = true;
+        newTeam.isActive = true;
+        ban.champion = new Champion();
+        return ban;
+      }
+
+      const champion = kwargs.ddragon.getChampionById(action.championId);
+      ban.champion = {
+        id: action.championId,
+        name: champion ? champion.name : '',
+        idName: champion ? champion.id.toString() : '',
+        loadingImg: champion ? champion.loadingImg : '',
+        splashImg: champion ? champion.splashImg : '',
+        splashCenteredImg: champion ? champion.splashCenteredImg : '',
+        squareImg: champion ? champion.squareImg : '',
+      };
+
       return ban;
-    }
-
-    const champion = kwargs.ddragon.getChampionById(action.championId);
-    ban.champion = {
-      id: action.championId,
-      name: champion ? champion.name : '',
-      idName: champion ? champion.id.toString() : '',
-      loadingImg: champion ? champion.loadingImg : '',
-      splashImg: champion ? champion.splashImg : '',
-      splashCenteredImg: champion ? champion.splashCenteredImg : '',
-      squareImg: champion ? champion.squareImg : ''
-    };
-
-    return ban;
-  });
+    });
 
   return newTeam;
 };
@@ -106,7 +138,7 @@ const convertStateName = (actions: Array<Action>) => {
   const currentActionIndex = actions.findIndex((action) => !action.completed);
 
   if (currentActionIndex === -1) {
-    if (actions.length > 12) return 'SWAP PHASE'
+    if (actions.length > 12) return 'SWAP PHASE';
     else return '';
   }
 
@@ -126,18 +158,37 @@ const convertStateName = (actions: Array<Action>) => {
   }
 };
 
-const convertState = (state: CurrentState, oldState: State, dataProvider: DataProviderService, ddragon: DataDragon): { blueTeam: Team; redTeam: Team; timer: number; state: string } => {
+const convertState = (
+  state: CurrentState,
+  oldState: State,
+  dataProvider: DataProviderService,
+  ddragon: DataDragon
+): { blueTeam: Team; redTeam: Team; timer: number; state: string } => {
   const lcuSession = state.session;
 
-  const currentDate = (state as RecordingDatapoint).time ? new Date((state as RecordingDatapoint).time) : new Date();
+  const currentDate = (state as RecordingDatapoint).time
+    ? new Date((state as RecordingDatapoint).time)
+    : new Date();
 
   const flattenedActions: Array<Action> = [];
-  lcuSession.actions.forEach(actionGroup => {
+  lcuSession.actions.forEach((actionGroup) => {
     flattenedActions.push(...actionGroup);
   });
 
-  const blueTeam = convertTeam({ team: lcuSession.myTeam, oldstate: oldState, actions: flattenedActions, dataProvider, ddragon });
-  const redTeam = convertTeam({ team: lcuSession.theirTeam, oldstate: oldState, actions: flattenedActions, dataProvider, ddragon });
+  const blueTeam = convertTeam({
+    team: lcuSession.myTeam,
+    oldstate: oldState,
+    actions: flattenedActions,
+    dataProvider,
+    ddragon,
+  });
+  const redTeam = convertTeam({
+    team: lcuSession.theirTeam,
+    oldstate: oldState,
+    actions: flattenedActions,
+    dataProvider,
+    ddragon,
+  });
 
   const timer = convertTimer(lcuSession.timer, currentDate);
   const stateName = convertStateName(flattenedActions);
@@ -146,7 +197,7 @@ const convertState = (state: CurrentState, oldState: State, dataProvider: DataPr
     blueTeam,
     redTeam,
     timer,
-    state: stateName
+    state: stateName,
   };
 };
 

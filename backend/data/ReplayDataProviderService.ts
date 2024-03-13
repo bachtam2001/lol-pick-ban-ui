@@ -8,7 +8,10 @@ import RecordingDatapoint from '../recording/RecordingDatapoint';
 import { registerHandler } from '../Console';
 const log = logger('ReplayDataProviderService');
 
-export default class ReplayDataProviderService extends EventEmitter implements DataProviderService {
+export default class ReplayDataProviderService
+  extends EventEmitter
+  implements DataProviderService
+{
   replayFilePath: string;
   recording: {
     summoners: Array<Summoner>;
@@ -28,7 +31,7 @@ export default class ReplayDataProviderService extends EventEmitter implements D
     this.numberOfPoints = this.recording.dataPoints.length;
 
     // Pause / UnPause
-    registerHandler(event => {
+    registerHandler((event) => {
       if (event.name === 'p') {
         this.togglePause();
       }
@@ -40,7 +43,11 @@ export default class ReplayDataProviderService extends EventEmitter implements D
   }
 
   async getCurrentData(): Promise<CurrentState> {
-    log.info(`${this.numberOfPoints - this.recording.dataPoints.length} / ${this.numberOfPoints}`);
+    log.info(
+      `${this.numberOfPoints - this.recording.dataPoints.length} / ${
+        this.numberOfPoints
+      }`
+    );
 
     let nextPoint;
 
@@ -58,7 +65,9 @@ export default class ReplayDataProviderService extends EventEmitter implements D
   }
 
   getSummonerById(id: number): Summoner {
-    return this.recording.summoners.filter((summoner) => summoner.summonerId === id)[0];
+    return this.recording.summoners.filter(
+      (summoner) => summoner.summonerId === id
+    )[0];
   }
 
   togglePause(): void {

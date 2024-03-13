@@ -15,7 +15,11 @@ export default class Recorder {
   }
 
   addDataPoint(state: CurrentState): void {
-    const dataPoint = new RecordingDatapoint(state.isChampSelectActive, state.session, new Date());
+    const dataPoint = new RecordingDatapoint(
+      state.isChampSelectActive,
+      state.session,
+      new Date()
+    );
     this.dataPoints.push(dataPoint);
   }
 
@@ -43,7 +47,7 @@ export default class Recorder {
 
     const jsonString = JSON.stringify({
       dataPoints: this.dataPoints,
-      summoners: this.summoners
+      summoners: this.summoners,
     });
 
     fs.writeFileSync(recordingsPath + '/' + this.name + '.json', jsonString);

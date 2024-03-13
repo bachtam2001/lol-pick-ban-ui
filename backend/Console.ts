@@ -20,7 +20,7 @@ if (process.stdin.setRawMode) {
     if (key.ctrl && key.name === 'c') {
       process.exit();
     } else {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         handler(key);
       });
     }

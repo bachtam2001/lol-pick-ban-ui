@@ -16,8 +16,10 @@ import fs from 'fs';
 import { Response } from 'league-connect';
 const log = logger('LCUDataProviderService');
 
-class LeagueDataProviderService extends EventEmitter
-  implements DataProviderService {
+class LeagueDataProviderService
+  extends EventEmitter
+  implements DataProviderService
+{
   connector: Connector;
   connectionInfo!: ConnectionInfo;
   recorder!: Recorder;
@@ -49,8 +51,17 @@ class LeagueDataProviderService extends EventEmitter
     this.getCurrentData = this.getCurrentData.bind(this);
 
     if (GlobalContext.commandLine.record) {
-      if (fs.existsSync('../recordings' + '/' + GlobalContext.commandLine.record + '.json') && !state.data.config.overwriteRecording) {
-        log.error('Recording ' + GlobalContext.commandLine.record + ' already exists. Will not overwrite and therefore not perform recording.')
+      if (
+        fs.existsSync(
+          '../recordings' + '/' + GlobalContext.commandLine.record + '.json'
+        ) &&
+        !state.data.config.overwriteRecording
+      ) {
+        log.error(
+          'Recording ' +
+            GlobalContext.commandLine.record +
+            ' already exists. Will not overwrite and therefore not perform recording.'
+        );
       } else {
         this.recorder = new Recorder(GlobalContext.commandLine.record);
         log.info('Recording to ' + GlobalContext.commandLine.record);
@@ -67,13 +78,13 @@ class LeagueDataProviderService extends EventEmitter
   async getCurrentData(): Promise<CurrentState | null> {
     if (!this.connectionInfo || !this.connectionInfo.port) {
       log.debug('Not connected to LCU, but tried to get data.');
-      return null
+      return null;
     }
 
     const response = await this.connector.request({
       url: '/lol-champ-select/v1/session',
-      method: 'GET'
-    })
+      method: 'GET',
+    });
 
     const currentState = new CurrentState(
       response?.ok ?? false,
@@ -98,7 +109,7 @@ class LeagueDataProviderService extends EventEmitter
       team.map((cell) =>
         this.connector.request({
           url: `/lol-summoner/v1/summoners/${cell.summonerId}`,
-          method: 'GET'
+          method: 'GET',
         })
       );
 

@@ -7,5 +7,5 @@ export default class HeartbeatEvent implements PBEvent {
   }
 
   eventType = 'heartbeat';
-  config: Config
+  config: Config;
 }

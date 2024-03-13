@@ -1,10 +1,10 @@
-import PBEvent from "./PBEvent";
+import PBEvent from './PBEvent';
 
 export default class NewActionEvent implements PBEvent {
   constructor(action: any) {
     this.action = action;
   }
 
-  eventType = "newAction";
+  eventType = 'newAction';
   action: any;
 }

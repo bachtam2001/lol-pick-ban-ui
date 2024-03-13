@@ -1,18 +1,18 @@
-import * as ws from "ws";
-import * as fs from "fs";
-import * as http from "http";
+import * as ws from 'ws';
+import * as fs from 'fs';
+import * as http from 'http';
 
-import logger from "../logging";
-import { StateData } from "../types/dto";
-import State from "../state";
-import PBEvent from "../types/events/PBEvent";
-import NewStateEvent from "../types/events/NewStateEvent";
-import HeartbeatEvent from "../types/events/HeartbeatEvent";
-import ChampSelectStartedEvent from "../types/events/ChampSelectStartedEvent";
-import ChampSelectEndedEvent from "../types/events/ChampSelectEndedEvent";
-import NewActionEvent from "../types/events/NewActionEvent";
+import logger from '../logging';
+import { StateData } from '../types/dto';
+import State from '../state';
+import PBEvent from '../types/events/PBEvent';
+import NewStateEvent from '../types/events/NewStateEvent';
+import HeartbeatEvent from '../types/events/HeartbeatEvent';
+import ChampSelectStartedEvent from '../types/events/ChampSelectStartedEvent';
+import ChampSelectEndedEvent from '../types/events/ChampSelectEndedEvent';
+import NewActionEvent from '../types/events/NewActionEvent';
 
-const log = logger("websocket");
+const log = logger('websocket');
 
 class WebSocketServer {
   server: ws.Server;
@@ -29,21 +29,21 @@ class WebSocketServer {
     this.sendHeartbeat = this.sendHeartbeat.bind(this);
 
     // Event listeners
-    this.server.on("connection", (socket: WebSocket, request) =>
+    this.server.on('connection', (socket: WebSocket, request) =>
       this.handleConnection(socket, request)
     );
 
-    state.on("stateUpdate", (newState: StateData) => {
+    state.on('stateUpdate', (newState: StateData) => {
       newState.config = this.config;
       this.sendEvent(new NewStateEvent(newState));
     });
-    state.on("champSelectStarted", () =>
+    state.on('champSelectStarted', () =>
       this.sendEvent(new ChampSelectStartedEvent())
     );
-    state.on("champSelectEnded", () =>
+    state.on('champSelectEnded', () =>
       this.sendEvent(new ChampSelectEndedEvent())
     );
-    state.on("newAction", (action) => {
+    state.on('newAction', (action) => {
       this.sendEvent(new NewActionEvent(action));
     });
   }
@@ -67,7 +67,7 @@ class WebSocketServer {
   }
 
   sendHeartbeat(): void {
-    this.config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+    this.config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
     const heartbeatEvent = new HeartbeatEvent(this.config);
     const heartbeatSerialized = JSON.stringify(heartbeatEvent);
 

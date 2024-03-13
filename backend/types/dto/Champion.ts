@@ -1,4 +1,4 @@
-import { Skin } from "./Skin";
+import { Skin } from './Skin';
 
 export class Champion {
   id = 0;

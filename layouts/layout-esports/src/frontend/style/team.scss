@@ -1,0 +1,107 @@
+.Team {
+  position: absolute;
+  width: var(--box-team-width);
+  height: var(--box-height);
+  bottom: var(--champselect-margin-bot);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .TeamName {
+    font-size: 40px;
+    color: white;
+    font-family: "Anton";
+    line-height: 1.2;
+    text-transform: uppercase;
+    &.WithoutCoaches {
+      font-size: 45px;
+    }
+  }
+
+  .CoachName {
+    font-size: 20px;
+  }
+
+  .TeamScore {
+    font-size: 45px;
+    color: white;
+    font-family: "Anton";
+    width: var(--box-ban-height);
+    text-align: center;
+    height: 85%;
+    line-height: 1.05;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  @import "./picks";
+  @import "./bans";
+
+  &.TeamBlue {
+    right: calc(50% + calc(var(--box-width) / 2));
+
+    .TeamScore {
+      border-left: 6px solid white;
+      margin-right: auto;
+    }
+
+    .Bans {
+      justify-content: flex-end;
+      border: solid var(--border-width) rgba(0, 0, 0, 0);
+      float: right;
+
+      .Ban {
+        .BanImage.Active::before {
+          background-image: radial-gradient(circle closest-corner, rgba(0, 0, 0, 0) 0%, var(--color-blue) 100%);
+        }
+      }
+    }
+
+    .Picks {
+      .Pick {
+        .PickImage.Active::before {
+          height: 100%;
+          background-image: linear-gradient(to top, var(--color-blue) 20%, rgba(0, 0, 0, 0) 100%);
+        }
+      }
+    }
+
+    .TeamName {
+      margin-left: 15px;
+    }
+  }
+
+  &.TeamRed {
+    left: calc(50% + calc(var(--box-width) / 2));
+
+    .TeamScore {
+      border-right: 6px solid white;
+      margin-left: auto;
+    }
+
+    .Bans {
+      border: solid var(--border-width) rgba(0, 0, 0, 0);
+      float: left;
+
+      .Ban {
+        .BanImage.Active::before {
+          background-image: radial-gradient(circle closest-corner, rgba(0, 0, 0, 0) 0%, var(--color-red) 100%);
+        }
+      }
+    }
+
+    .Picks {
+      .Pick {
+        .PickImage.Active::before {
+          height: 100%;
+          background-image: linear-gradient(to top, var(--color-red) 20%, rgba(0, 0, 0, 0) 100%);
+        }
+      }
+    }
+
+    .TeamName {
+      text-align: right;
+      margin-right: 15px;
+    }
+  }
+}

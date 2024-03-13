@@ -1,24 +1,24 @@
 {
   "frontend": {
-    "scoreEnabled": false,
+    "scoreEnabled": true,
     "spellsEnabled": false,
-    "coachesEnabled": true,
+    "coachesEnabled": false,
     "patch": "12.8.1"
   },
   "teams": {
     "blueTeam": {
-      "name": "",
-      "short": "",
+      "name": "Team A",
+      "short": "TA",
       "score": 0,
       "coach": "Coach Blue",
-      "color": "#2d58bd"
+      "color": "#007ff6"
     },
     "redTeam": {
-      "name": "",
-      "short": "",
-      "score": 0,
+      "name": "Team B",
+      "short": "B",
+      "score": 3,
       "coach": "Coach Red",
-      "color": "#f09b38"
+      "color": "#007ff6"
     }
   },
   "contentPatch": "latest",

@@ -7,5 +7,5 @@ export default class NewStateEvent implements PBEvent {
   }
 
   eventType = 'newState';
-  state: StateData
+  state: StateData;
 }

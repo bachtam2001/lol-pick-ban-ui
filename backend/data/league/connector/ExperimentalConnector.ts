@@ -11,10 +11,12 @@ const log = logger('ExperimentalConnector');
 
 class ExperimentalConnectorOptions extends ConnectorOptions {}
 
-export default class ExperimentalConnector extends EventEmitter
-  implements Connector {
+export default class ExperimentalConnector
+  extends EventEmitter
+  implements Connector
+{
   options: ExperimentalConnectorOptions;
-  connectionInfo?: ConnectionInfo
+  connectionInfo?: ConnectionInfo;
 
   isConnected = false;
 
@@ -41,35 +43,34 @@ export default class ExperimentalConnector extends EventEmitter
     log.info('ExperimentalConnector started');
     this.update();
 
-    setInterval(() => this.update(), 5000)
+    setInterval(() => this.update(), 5000);
   }
 
   async request(args: RequestOptions<any>): Promise<Response<any> | undefined> {
-    if (!this.connectionInfo) return
-    return await needle(
+    if (!this.connectionInfo) return;
+    return (await needle(
       'get',
       `https://127.0.0.1:${this.connectionInfo.port}${args.url}`,
       this.requestConfig
-    ) as unknown as Response<any>
+    )) as unknown as Response<any>;
   }
 
   update(): void {
     if (this.isConnected) {
-      log.debug('Already connected, not checking.')
+      log.debug('Already connected, not checking.');
       return;
     }
 
     const readLockfile = async (leaguePath: string): Promise<void> => {
       // Read lockfile
-      const lockFilePath = path.join(leaguePath, 'lockfile')
+      const lockFilePath = path.join(leaguePath, 'lockfile');
       if (!fs.existsSync(lockFilePath)) {
-        log.info(`Failed to find lock file at ${lockFilePath}. Is the League Client running and the location correct?`)
-        return
+        log.info(
+          `Failed to find lock file at ${lockFilePath}. Is the League Client running and the location correct?`
+        );
+        return;
       }
-      const lockfile = await fs.readFile(
-        lockFilePath,
-        'utf8'
-      );
+      const lockfile = await fs.readFile(lockFilePath, 'utf8');
       log.debug('Found lockfile at: ' + lockFilePath);
       const splitted = lockfile.split(':');
 
@@ -82,29 +83,31 @@ export default class ExperimentalConnector extends EventEmitter
           password: splitted[3],
         };
 
-        this.connectionInfo = connectionInfo
+        this.connectionInfo = connectionInfo;
 
-        this.requestConfig.password = splitted[3]
-        this.requestConfig.username = 'riot'
+        this.requestConfig.password = splitted[3];
+        this.requestConfig.username = 'riot';
 
         this.emit('connect', connectionInfo);
       }
-    }
+    };
 
     if (this.options.leaguePath) {
-      const leaguePath = path.normalize(this.options.leaguePath)
-      log.debug(`Using configured league path: ${leaguePath}`)
-      readLockfile(leaguePath)
+      const leaguePath = path.normalize(this.options.leaguePath);
+      log.debug(`Using configured league path: ${leaguePath}`);
+      readLockfile(leaguePath);
     } else {
-      log.debug('Trying to detect league path automatically.')
+      log.debug('Trying to detect league path automatically.');
 
       const INSTALL_REGEX_WIN = /"--install-directory=(.*?)"/;
-      const command = 'WMIC PROCESS WHERE name=\'LeagueClientUx.exe\' GET commandline';
+      const command =
+        "WMIC PROCESS WHERE name='LeagueClientUx.exe' GET commandline";
 
       cp.exec(command, async (err, stdout, stderr) => {
         if (err || !stdout || stderr) {
           log.debug(
-            'Failed to find the league process. Is the LeagueClient running?', err
+            'Failed to find the league process. Is the LeagueClient running?',
+            err
           );
           return;
         }
@@ -113,7 +116,7 @@ export default class ExperimentalConnector extends EventEmitter
         const leaguePath = parts[1];
         log.debug('Found LeagueClient installation path: ' + leaguePath);
 
-        readLockfile(leaguePath)
+        readLockfile(leaguePath);
       });
     }
   }
